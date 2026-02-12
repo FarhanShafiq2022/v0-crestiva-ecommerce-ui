@@ -110,6 +110,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     ids: [],
   })
 
+  console.log("[v0] StoreProvider render - cart items:", cartState.items.length, "wishlist ids:", wishlistState.ids.length)
+
   const addToCart = useCallback(
     (product: Product, quantity = 1) => {
       cartDispatch({ type: 'ADD', product, quantity })
