@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Heart, ShoppingBag, Eye, Star } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Product } from '@/lib/data'
@@ -19,6 +20,9 @@ export function ProductCard({ product, className }: ProductCardProps) {
   const { addToCart } = useCart()
   const { toggleWishlist, isInWishlist } = useWishlist()
   const wishlisted = isInWishlist(product.id)
+  const router = useRouter()
+
+  const productHref = `/product/${product.slug}`
 
   return (
     <div
@@ -26,8 +30,8 @@ export function ProductCard({ product, className }: ProductCardProps) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Image */}
-      <Link href={`/product/${product.slug}`} className="block relative overflow-hidden rounded-sm aspect-[3/4] bg-muted">
+      {/* Image area - use a div instead of Link to avoid nested <a> tags */}
+      <div className="relative overflow-hidden rounded-sm aspect-[3/4] bg-muted cursor-pointer" onClick={() => router.push(productHref)}>
         <img
           src={product.image}
           alt={product.name}
@@ -75,7 +79,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
         >
           <button
             onClick={(e) => {
-              e.preventDefault()
+              e.stopPropagation()
               addToCart(product)
               toast.success(`${product.name} added to cart`)
             }}
@@ -84,14 +88,18 @@ export function ProductCard({ product, className }: ProductCardProps) {
             <ShoppingBag size={14} />
             Add to Cart
           </button>
-          <Link
-            href={`/product/${product.slug}`}
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              router.push(productHref)
+            }}
             className="p-2.5 bg-background/90 text-foreground hover:bg-background transition-colors"
+            aria-label={`View ${product.name}`}
           >
             <Eye size={14} />
-          </Link>
+          </button>
         </div>
-      </Link>
+      </div>
 
       {/* Wishlist button */}
       <button
